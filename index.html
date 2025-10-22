@@ -1,475 +1,632 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Big M 모건 — Portail Galactique</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: url('https://images.unsplash.com/photo-1605731412003-bd3fef3a542d?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      overflow-x: hidden;
-      backdrop-filter: blur(5px);
-    }
-    .intro {
-      animation: fadeIn 2s ease forwards;
-      opacity: 0;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 0.5rem;
-      color: #00fff7;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-    }
-    .subtitle {
-      color: #aaa;
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      margin-bottom: 2rem;
-    }
-    .language-select, .id-input, .staff-login {
-      margin: 1rem 0;
-    }
-    select, input[type="text"], input[type="password"] {
-      padding: 0.7rem 1.2rem;
-      border-radius: 12px;
-      border: none;
-      background: #111;
-      color: #00fff7;
-      font-size: 1rem;
-      outline: none;
-      box-shadow: 0 0 10px rgba(0,255,247,0.4);
-      transition: all 0.3s ease;
-    }
-    select:focus, input:focus {
-      box-shadow: 0 0 15px rgba(0,255,247,0.8);
-    }
-    .enter-button, .staff-button {
-      margin-top: 1rem;
-      padding: 1rem 2.5rem;
-      background: linear-gradient(135deg, #111, #222);
-      border: 2px solid #00fff7;
-      border-radius: 15px;
-      color: #00fff7;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .enter-button:hover, .staff-button:hover {
-      background: #00fff7;
-      color: #111;
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(0,255,247,0.5);
-    }
-    .profile-img {
-      width: clamp(80px, 20vw, 130px);
-      height: clamp(80px, 20vw, 130px);
-      border-radius: 50%;
-      border: 4px solid #00fff7;
-      object-fit: cover;
-      box-shadow: 0 0 15px rgba(0,255,247,0.6);
-      margin-bottom: 1rem;
-      transition: transform 0.5s;
-    }
-    .profile-img:hover {
-      transform: rotate(5deg) scale(1.05);
-    }
-    .qr-code-btn {
-      margin-top: 1rem;
-      background: none;
-      border: none;
-      color: #00fff7;
-      font-size: 0.9rem;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    .admin-access {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #888;
-    }
-    .admin-access span {
-      color: #f0f0f0;
-      font-weight: bold;
-    }
-    .admin-panel, .staff-panel {
-      display: none;
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: rgba(0, 0, 0, 0.8);
-      border: 1px solid #00fff7;
-      border-radius: 15px;
-      max-width: 90%;
-      width: 400px;
-    }
-    .admin-panel h3, .staff-panel h3 {
-      color: #00fff7;
-      margin-top: 0;
-    }
-    .admin-panel input, .admin-panel button, .staff-panel input, .staff-panel button {
-      margin: 0.5rem;
-    }
-    .staff-panel {
-      border-color: #ff6b35;
-      background: rgba(255, 107, 53, 0.1);
-    }
-    .staff-panel h3 {
-      color: #ff6b35;
-    }
-    .staff-panel input {
-      border-color: #ff6b35;
-      color: #ff6b35;
-    }
-    .error-message {
-      color: #ff4444;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-    .loading {
-      display: none;
-      color: #00fff7;
-      margin-top: 1rem;
-    }
-    .loading::after {
-      content: '';
-      animation: dots 1.5s infinite;
-    }
-    @keyframes dots {
-      0%, 20% { content: '.'; }
-      40% { content: '..'; }
-      60%, 100% { content: '...'; }
-    }
-    footer {
-      position: absolute;
-      bottom: 10px;
-      font-size: 0.85rem;
-      color: #666;
-    }
-    audio {
-      display: none;
-    }
-    .stats-panel {
-      display: none;
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.9);
-      border: 1px solid #00fff7;
-      border-radius: 10px;
-      padding: 1rem;
-      font-size: 0.8rem;
-      color: #00fff7;
-    }
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
-      .admin-panel, .staff-panel {
-        width: 95%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Big M 모건 - Portail Galactique Ultra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-cyan: #00fff7;
+            --deep-purple: #1a0033;
+            --neon-pink: #ff00ff;
+            --electric-blue: #0080ff;
+            --warning-orange: #ff6b35;
+            --success-green: #00ff88;
+            --bg-dark: #000011;
+            --bg-gradient: linear-gradient(135deg, #000011 0%, #001122 50%, #000033 100%);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-gradient);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: var(--primary-cyan);
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 17, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--primary-cyan);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 255, 247, 0.5);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:hover {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Main container */
+        .main-container {
+            padding-top: 100px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Login section */
+        .login-section {
+            background: rgba(0, 17, 34, 0.9);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 247, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 247, 0.3); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 247, 0.6); }
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-cyan);
+            object-fit: cover;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px var(--primary-cyan);
+        }
+
+        .title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--primary-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-cyan);
+            font-weight: 600;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--electric-blue);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.5);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(45deg, var(--electric-blue), var(--primary-cyan));
+            border: none;
+            border-radius: 25px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 247, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .btn-staff {
+            background: linear-gradient(45deg, var(--warning-orange), #ff8c42);
+            border: none;
+        }
+
+        /* Panels */
+        .panel {
+            display: none;
+            background: rgba(0, 17, 34, 0.95);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .panel-staff {
+            border-color: var(--warning-orange);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Status indicators */
+        .status-bar {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 17, 0.9);
+            border: 1px solid var(--primary-cyan);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-value {
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .login-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <audio autoplay loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/10/19/audio_d6852e1404.mp3?filename=deep-space-ambient-113845.mp3" type="audio/mpeg">
-  </audio>
-  
-  <div class="stats-panel" id="statsPanel">
-    <div>Visiteurs: <span id="visitorCount">0</span></div>
-    <div>Staff connecté: <span id="staffCount">0</span></div>
-    <div>Uptime: <span id="uptime">0h 0m</span></div>
-  </div>
+    <!-- Animated background -->
+    <div class="stars-bg" id="starsBg"></div>
 
-  <div class="intro">
-    <img src="morgan.jpg" alt="Photo de Morgan" class="profile-img" onerror="this.src='https://via.placeholder.com/130x130/00fff7/000000?text=M'">
-    <h1>🌌 Bienvenue dans mon univers</h1>
-    <div class="subtitle">Portail d'accès — Big M 모건</div>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">🌌 BIG M 모건</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link" onclick="showSection('home')">Accueil</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('dashboard')">Tableau de bord</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('monitoring')">Surveillance</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('content')">Contenu</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('analytics')">Analytics</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-    <div class="language-select">
-      <label for="lang">🌍 Choisis ta langue :</label><br>
-      <select id="lang">
-        <option value="fr">Français 🇫🇷</option>
-        <option value="en">English 🇬🇧</option>
-      </select>
+    <!-- Status bar -->
+    <div class="status-bar" id="statusBar">
+        <div class="status-item">
+            <span>Visiteurs:</span>
+            <span class="status-value" id="visitorCount">0</span>
+        </div>
+        <div class="status-item">
+            <span>Staff en ligne:</span>
+            <span class="status-value" id="staffCount">0</span>
+        </div>
+        <div class="status-item">
+            <span>Uptime:</span>
+            <span class="status-value" id="uptime">0h 0m</span>
+        </div>
+        <div class="status-item">
+            <span>Performance:</span>
+            <span class="status-value" id="performance">100%</span>
+        </div>
     </div>
 
-    <div class="id-input">
-      <label for="userId">🧬 Entre ton identifiant personnalisé :</label><br>
-      <input type="text" id="userId" placeholder="Ex: morgan001" maxlength="20">
-    </div>
+    <!-- Main container -->
+    <main class="main-container">
+        <!-- Login section -->
+        <section class="login-section" id="loginSection">
+            <div class="profile-section">
+                <img src="https://via.placeholder.com/150x150/00fff7/000000?text=M" alt="Profile" class="profile-img">
+                <h1 class="title">Portail Galactique</h1>
+                <p class="subtitle">Big M 모건 - Système de gestion ultra-avancé</p>
+            </div>
 
-    <button class="enter-button" onclick="enterSite()">✨ Entrer</button>
-    <button class="qr-code-btn" onclick="generateQR()">📲 Obtenir un QR Code personnalisé</button>
-    
-    <button class="qr-code-btn" onclick="toggleStaffLogin()">🔐 Accès Personnel</button>
-    
-    <div class="staff-panel" id="staffPanel">
-      <h3>🔐 Connexion Personnel</h3>
-      <input type="password" id="staffCode" placeholder="Code d'accès" maxlength="20">
-      <button class="staff-button" onclick="staffLogin()">Se connecter</button>
-      <div class="error-message" id="staffError">Code incorrect</div>
-      <div class="loading" id="staffLoading">Connexion en cours</div>
-    </div>
-  </div>
+            <div class="form-group">
+                <label class="form-label">🌍 Langue / Language</label>
+                <select class="form-select" id="language">
+                    <option value="fr">Français 🇫🇷</option>
+                    <option value="en">English 🇬🇧</option>
+                    <option value="kr">한국어 🇰🇷</option>
+                </select>
+            </div>
 
-  <div class="admin-access" id="adminMessage" style="display:none">
-    🔓 Accès spécial activé pour <span>administrateur</span> — chargement des modules avancés...
-  </div>
+            <div class="form-group">
+                <label class="form-label">🧬 Identifiant Galactique</label>
+                <input type="text" class="form-input" id="userId" placeholder="Ex: morgan-001" maxlength="20">
+            </div>
 
-  <div class="admin-panel" id="adminPanel">
-    <h3>🎛 Panneau Admin</h3>
-    <label><input type="checkbox" id="darkModeToggle"> Activer le mode ultra-sombre</label><br>
-    <button onclick="addQuickLink()">➕ Ajouter un lien rapide</button>
-    <button onclick="viewLogs()">📊 Voir les logs</button>
-    <button onclick="clearCache()">🗑 Vider le cache</button>
-  </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="enterPortal()">✨ ENTREZ DANS LE PORTAIL</button>
+                <button class="btn btn-secondary" onclick="generateQR()">📱 Générer QR Code</button>
+                <button class="btn btn-staff" onclick="toggleStaffAccess()">🔐 Accès Personnel</button>
+            </div>
+        </section>
 
-  <div class="admin-panel" id="staffDashboard" style="display:none; border-color: #ff6b35;">
-    <h3 style="color: #ff6b35;">👁 Panneau de Surveillance</h3>
-    <button onclick="viewAllUsers()">👥 Voir tous les utilisateurs</button>
-    <button onclick="monitorActivity()">📈 Activité en temps réel</button>
-    <button onclick="manageContent()">📝 Gérer le contenu</button>
-    <button onclick="systemStatus()">⚡ Statut système</button>
-  </div>
+        <!-- Staff login panel -->
+        <div class="panel panel-staff" id="staffPanel">
+            <h3 style="color: var(--warning-orange); margin-bottom: 1rem;">🔐 Accès Personnel Sécurisé</h3>
+            <div class="form-group">
+                <input type="password" class="form-input" id="staffCode" placeholder="Code d'accès personnel" maxlength="20">
+            </div>
+            <button class="btn btn-staff" onclick="staffLogin()">SE CONNECTER</button>
+            <div id="staffError" style="color: #ff4444; margin-top: 1rem; display: none;"></div>
+            <div id="staffLoading" style="color: var(--primary-cyan); margin-top: 1rem; display: none;">Connexion en cours...</div>
+        </div>
 
-  <footer>
-    &copy; 2025 Big M — All rights reserved | <span id="loadTime">Load: 0ms</span>
-  </footer>
+        <!-- Admin panel -->
+        <div class="panel" id="adminPanel">
+            <h3 style="color: var(--primary-cyan); margin-bottom: 1rem;">🎛 Panneau d'Administration Galactique</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <button class="btn" onclick="openDashboard()">📊 Tableau de Bord</button>
+                <button class="btn" onclick="openMonitoring()">👁 Surveillance</button>
+                <button class="btn" onclick="openContentManager()">📝 Gestion Contenu</button>
+                <button class="btn" onclick="openAnalytics()">📈 Analytics</button>
+                <button class="btn btn-secondary" onclick="clearCache()">🗑 Vider Cache</button>
+                <button class="btn btn-secondary" onclick="viewLogs()">📋 Voir Logs</button>
+            </div>
+        </div>
+    </main>
 
-  <script>
-    // Performance monitoring
-    const startTime = performance.now();
-    
-    // Cache system
-    const cache = new Map();
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+    <script>
+        // Global variables
+        let currentUser = null;
+        let staffSession = false;
+        let securityLogs = [];
+        let visitorCount = 0;
+        let staffCount = 0;
+        let siteStartTime = Date.now();
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      updateLoadTime();
-      updateStats();
-      setInterval(updateStats, 30000); // Update every 30 seconds
-    });
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStars();
+            loadStatistics();
+            initializeMonitoring();
+            setInterval(updateStatistics, 5000);
+        });
 
-    function updateLoadTime() {
-      const loadTime = Math.round(performance.now() - startTime);
-      document.getElementById('loadTime').textContent = `Load: ${loadTime}ms`;
-    }
-
-    function updateStats() {
-      const visitors = parseInt(localStorage.getItem('visitorCount') || '0');
-      const staff = parseInt(localStorage.getItem('staffCount') || '0');
-      const startDate = new Date(localStorage.getItem('siteStartDate') || new Date());
-      const uptime = new Date() - startDate;
-      
-      document.getElementById('visitorCount').textContent = visitors;
-      document.getElementById('staffCount').textContent = staff;
-      document.getElementById('uptime').textContent = formatUptime(uptime);
-    }
-
-    function formatUptime(ms) {
-      const hours = Math.floor(ms / (1000 * 60 * 60));
-      const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-      return `${hours}h ${minutes}m`;
-    }
-
-    function toggleStaffLogin() {
-      const panel = document.getElementById('staffPanel');
-      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-      document.getElementById('staffCode').value = '';
-      document.getElementById('staffError').style.display = 'none';
-    }
-
-    function staffLogin() {
-      const code = document.getElementById('staffCode').value.trim();
-      const errorDiv = document.getElementById('staffError');
-      const loadingDiv = document.getElementById('staffLoading');
-      
-      if (!code) {
-        errorDiv.textContent = 'Veuillez entrer un code';
-        errorDiv.style.display = 'block';
-        return;
-      }
-
-      loadingDiv.style.display = 'block';
-      errorDiv.style.display = 'none';
-
-      // Simulate secure check
-      setTimeout(() => {
-        loadingDiv.style.display = 'none';
-        
-        if (code === 'Morning_Starr') {
-          // Successful staff login
-          const staffCount = parseInt(localStorage.getItem('staffCount') || '0') + 1;
-          localStorage.setItem('staffCount', staffCount);
-          localStorage.setItem('staffSession', 'true');
-          localStorage.setItem('staffLoginTime', new Date().toISOString());
-          
-          document.getElementById('staffDashboard').style.display = 'block';
-          document.getElementById('staffPanel').style.display = 'none';
-          
-          // Add staff visual indicator
-          document.body.style.borderLeft = '5px solid #ff6b35';
-          
-          alert('✅ Accès personnel accordé - Mode surveillance activé');
-          updateStats();
-        } else {
-          errorDiv.textContent = 'Code incorrect - Tentative enregistrée';
-          errorDiv.style.display = 'block';
-          
-          // Log failed attempt
-          logSecurityEvent('Failed staff login attempt', { code: code, time: new Date().toISOString() });
+        // Animated background
+        function initializeStars() {
+            const starsBg = document.getElementById('starsBg');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsBg.appendChild(star);
+            }
         }
-      }, 1500);
-    }
 
-    function enterSite() {
-      const lang = document.getElementById('lang').value;
-      const userId = document.getElementById('userId').value.trim();
+        // Portal entry
+        function enterPortal() {
+            const userId = document.getElementById('userId').value.trim();
+            const language = document.getElementById('language').value;
 
-      if (!userId || !/^([a-zA-Z0-9-_]+)$/.test(userId)) {
-        alert("🔒 Identifiant invalide. Seuls les lettres, chiffres, tirets et underscores sont autorisés.");
-        return;
-      }
+            if (!userId || !/^([a-zA-Z0-9-_]+)$/.test(userId)) {
+                showNotification('Identifiant invalide', 'error');
+                return;
+            }
 
-      // Update visitor count
-      const visitorCount = parseInt(localStorage.getItem('visitorCount') || '0') + 1;
-      localStorage.setItem('visitorCount', visitorCount);
-      localStorage.setItem('lang', lang);
-      localStorage.setItem('userId', userId);
+            // Create user session
+            currentUser = {
+                id: userId,
+                language: language,
+                loginTime: new Date().toISOString(),
+                isAdmin: userId.toLowerCase().includes('root') || userId === 'iam24morgan'
+            };
 
-      const secretParam = btoa(`${userId}-bigmorgan-${Date.now()}`);
-      const isAdmin = userId.toLowerCase().includes("root") || userId === 'iam24morgan';
-      const isStaff = localStorage.getItem('staffSession') === 'true';
+            // Update statistics
+            visitorCount++;
+            localStorage.setItem('visitorCount', visitorCount);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-      if (isAdmin) {
-        document.getElementById('adminMessage').style.display = 'block';
-        document.getElementById('adminPanel').style.display = 'block';
-      }
+            // Log security event
+            logSecurityEvent('USER_LOGIN', { userId, language });
 
-      // Log user activity
-      logSecurityEvent('User login', { userId, lang, isAdmin, isStaff });
+            // Show admin panel if admin
+            if (currentUser.isAdmin) {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
 
-      setTimeout(() => {
-        window.location.href = `home.html?lang=${lang}&auth=${secretParam}${isAdmin ? '&admin=true' : ''}${isStaff ? '&staff=true' : ''}`;
-      }, 1000);
-    }
+            showNotification('✅ Connexion réussie! Redirection...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = `dashboard.html?user=${userId}&lang=${language}&admin=${currentUser.isAdmin}`;
+            }, 1500);
+        }
 
-    function generateQR() {
-      const userId = document.getElementById('userId').value.trim();
-      if (!userId) {
-        alert("🔐 Tu dois d'abord entrer un identifiant.");
-        return;
-      }
-      const secretParam = btoa(`${userId}-bigmorgan-${Date.now()}`);
-      const url = `${window.location.origin}/home.html?auth=${secretParam}`;
-      
-      // Cache QR generation
-      const cacheKey = `qr-${userId}`;
-      if (cache.has(cacheKey) && Date.now() - cache.get(cacheKey).timestamp < CACHE_DURATION) {
-        window.open(cache.get(cacheKey).url, '_blank');
-        return;
-      }
-      
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=300x300`;
-      cache.set(cacheKey, { url: qrUrl, timestamp: Date.now() });
-      window.open(qrUrl, '_blank');
-    }
+        // Staff login
+        function toggleStaffAccess() {
+            const panel = document.getElementById('staffPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
 
-    function addQuickLink() {
-      const link = prompt('Entrez l\'URL du lien rapide:');
-      const name = prompt('Entrez le nom du lien:');
-      if (link && name) {
-        let quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
-        quickLinks.push({ name, link, date: new Date().toISOString() });
-        localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
-        alert(`✅ Lien rapide "${name}" ajouté`);
-      }
-    }
+        function staffLogin() {
+            const code = document.getElementById('staffCode').value.trim();
+            const errorDiv = document.getElementById('staffError');
+            const loadingDiv = document.getElementById('staffLoading');
 
-    function viewLogs() {
-      const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
-      const recentLogs = logs.slice(-10).reverse();
-      let logText = '📊 Logs de sécurité (10 derniers):\n\n';
-      recentLogs.forEach(log => {
-        logText += `${new Date(log.timestamp).toLocaleString()} - ${log.event}\n`;
-      });
-      alert(logText);
-    }
+            if (!code) {
+                errorDiv.textContent = 'Veuillez entrer le code personnel';
+                errorDiv.style.display = 'block';
+                return;
+            }
 
-    function clearCache() {
-      cache.clear();
-      localStorage.removeItem('quickLinks');
-      alert('🗑 Cache vidé');
-    }
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
 
-    function viewAllUsers() {
-      alert('🚧 Fonctionnalité en développement - Vue des utilisateurs');
-    }
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                
+                if (code === 'Morning_Starr') {
+                    staffSession = true;
+                    staffCount++;
+                    localStorage.setItem('staffCount', staffCount);
+                    localStorage.setItem('staffSession', 'true');
+                    
+                    logSecurityEvent('STAFF_LOGIN', { code: 'SUCCESS' });
+                    
+                    document.getElementById('staffPanel').style.display = 'none';
+                    showNotification('🔓 Accès personnel accordé!', 'success');
+                    
+                    // Open staff dashboard
+                    setTimeout(() => {
+                        window.location.href = 'staff-dashboard.html';
+                    }, 1000);
+                } else {
+                    errorDiv.textContent = '❌ Code incorrect - Tentative enregistrée';
+                    errorDiv.style.display = 'block';
+                    logSecurityEvent('FAILED_STAFF_LOGIN', { code: code });
+                }
+            }, 2000);
+        }
 
-    function monitorActivity() {
-      alert('📈 Surveillance active - Activité en temps réel');
-      // Implement real-time monitoring
-    }
+        // Statistics and monitoring
+        function loadStatistics() {
+            visitorCount = parseInt(localStorage.getItem('visitorCount') || '0');
+            staffCount = parseInt(localStorage.getItem('staffCount') || '0');
+            updateStatistics();
+        }
 
-    function manageContent() {
-      alert('📝 Gestion du contenu - Accès au système de gestion');
-    }
+        function updateStatistics() {
+            document.getElementById('visitorCount').textContent = visitorCount;
+            document.getElementById('staffCount').textContent = staffCount;
+            
+            const uptime = Date.now() - siteStartTime;
+            const hours = Math.floor(uptime / (1000 * 60 * 60));
+            const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+            
+            // Performance calculation
+            const performance = Math.max(0, Math.min(100, 100 - (securityLogs.length * 0.5)));
+            document.getElementById('performance').textContent = `${Math.round(performance)}%`;
+        }
 
-    function systemStatus() {
-      const memory = navigator.deviceMemory || 'Inconnu';
-      const cores = navigator.hardwareConcurrency || 'Inconnu';
-      const status = `⚡ Statut système:\n\nMémoire: ${memory}GB\nCœurs CPU: ${cores}\nTemps de chargement: ${Math.round(performance.now() - startTime)}ms\nCache: ${cache.size} entrées`;
-      alert(status);
-    }
+        // Security and logging
+        function logSecurityEvent(event, data) {
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                event: event,
+                data: data,
+                user: currentUser?.id || 'anonymous'
+            };
+            
+            securityLogs.push(logEntry);
+            localStorage.setItem('securityLogs', JSON.stringify(securityLogs.slice(-100)));
+        }
 
-    function logSecurityEvent(event, data) {
-      const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
-      logs.push({
-        event,
-        data,
-        timestamp: new Date().toISOString()
-      });
-      // Keep only last 100 logs
-      if (logs.length > 100) {
-        logs.splice(0, logs.length - 100);
-      }
-      localStorage.setItem('securityLogs', JSON.stringify(logs));
-    }
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 2rem;
+                background: ${type === 'success' ? 'var(--success-green)' : 'var(--warning-orange)'};
+                color: white;
+                border-radius: 10px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
 
-    // Error handling
-    window.addEventListener('error', function(e) {
-      logSecurityEvent('JavaScript Error', {
-        message: e.message,
-        filename: e.filename,
-        lineno: e.lineno,
-        colno: e.colno
-      });
-    });
+        // Utility functions
+        function generateQR() {
+            const userId = document.getElementById('userId').value.trim();
+            if (!userId) {
+                showNotification('Entrez un identifiant d\'abord', 'error');
+                return;
+            }
+            
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(userId)}&size=300x300&color=00fff7&bgcolor=000011`;
+            window.open(qrUrl, '_blank');
+        }
 
-    // Initialize site start date
-    if (!localStorage.getItem('siteStartDate')) {
-      localStorage.setItem('siteStartDate', new Date().toISOString());
-    }
-  </script>
+        function clearCache() {
+            localStorage.clear();
+            securityLogs = [];
+            showNotification('Cache vidé avec succès', 'success');
+        }
+
+        function viewLogs() {
+            const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+            const recentLogs = logs.slice(-10);
+            let logText = '📋 Logs de sécurité récents:\n\n';
+            recentLogs.forEach(log => {
+                logText += `[${new Date(log.timestamp).toLocaleTimeString()}] ${log.event}\n`;
+            });
+            alert(logText);
+        }
+
+        function initializeMonitoring() {
+            // Monitor errors
+            window.addEventListener('error', (e) => {
+                logSecurityEvent('JS_ERROR', {
+                    message: e.message,
+                    filename: e.filename,
+                    line: e.lineno
+                });
+            });
+            
+            // Monitor performance
+            setInterval(() => {
+                const memory = performance.memory;
+                if (memory) {
+                    const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+                    if (usedMB > 100) {
+                        logSecurityEvent('HIGH_MEMORY_USAGE', { usage: usedMB });
+                    }
+                }
+            }, 30000);
+        }
+
+        // Page navigation
+        function showSection(section) {
+            // Implementation for SPA navigation
+            console.log(`Navigating to: ${section}`);
+        }
+
+        function openDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function openMonitoring() {
+            window.location.href = 'monitoring.html';
+        }
+
+        function openContentManager() {
+            window.location.href = 'content-manager.html';
+        }
+
+        function openAnalytics() {
+            window.location.href = 'analytics.html';
+        }
+    </script>
 </body>
 </html>
