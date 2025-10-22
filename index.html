@@ -4,323 +4,629 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌌 Big M 모건 - Portail Galactique Ultra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Styles identiques mais j'ai ajouté : */
-        .access-warning {
-            background: rgba(255, 107, 53, 0.2);
-            border: 2px solid var(--warning-orange);
-            color: var(--warning-orange);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            text-align: center;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .access-granted {
-            background: rgba(0, 255, 136, 0.2);
-            border: 2px solid var(--success-green);
-            color: var(--success-green);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
+        :root {
+            --primary-cyan: #00fff7;
+            --deep-purple: #1a0033;
+            --neon-pink: #ff00ff;
+            --electric-blue: #0080ff;
+            --warning-orange: #ff6b35;
+            --success-green: #00ff88;
+            --bg-dark: #000011;
+            --bg-gradient: linear-gradient(135deg, #000011 0%, #001122 50%, #000033 100%);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-gradient);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: var(--primary-cyan);
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 17, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--primary-cyan);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 255, 247, 0.5);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:hover {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Main container */
+        .main-container {
+            padding-top: 100px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Login section */
+        .login-section {
+            background: rgba(0, 17, 34, 0.9);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 247, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 247, 0.3); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 247, 0.6); }
+        }
+
+        .profile-section {
             text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-cyan);
+            object-fit: cover;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px var(--primary-cyan);
+        }
+
+        .title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--primary-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-cyan);
+            font-weight: 600;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--electric-blue);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.5);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(45deg, var(--electric-blue), var(--primary-cyan));
+            border: none;
+            border-radius: 25px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 247, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .btn-staff {
+            background: linear-gradient(45deg, var(--warning-orange), #ff8c42);
+            border: none;
+        }
+
+        /* Panels */
+        .panel {
+            display: none;
+            background: rgba(0, 17, 34, 0.95);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .panel-staff {
+            border-color: var(--warning-orange);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Status indicators */
+        .status-bar {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 17, 0.9);
+            border: 1px solid var(--primary-cyan);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-value {
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .login-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Structure HTML identique jusqu'au JavaScript -->
+    <!-- Animated background -->
+    <div class="stars-bg" id="starsBg"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">🌌 BIG M 모건</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link" onclick="showSection('home')">Accueil</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('dashboard')">Tableau de bord</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('monitoring')">Surveillance</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('content')">Contenu</a></li>
+                    <li><a href="#" class="nav-link" onclick="showSection('analytics')">Analytics</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Status bar -->
+    <div class="status-bar" id="statusBar">
+        <div class="status-item">
+            <span>Visiteurs:</span>
+            <span class="status-value" id="visitorCount">0</span>
+        </div>
+        <div class="status-item">
+            <span>Staff en ligne:</span>
+            <span class="status-value" id="staffCount">0</span>
+        </div>
+        <div class="status-item">
+            <span>Uptime:</span>
+            <span class="status-value" id="uptime">0h 0m</span>
+        </div>
+        <div class="status-item">
+            <span>Performance:</span>
+            <span class="status-value" id="performance">100%</span>
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <main class="main-container">
+        <!-- Login section -->
+        <section class="login-section" id="loginSection">
+            <div class="profile-section">
+                <img src="https://via.placeholder.com/150x150/00fff7/000000?text=M" alt="Profile" class="profile-img">
+                <h1 class="title">Portail Galactique</h1>
+                <p class="subtitle">Big M 모건 - Système de gestion ultra-avancé</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🌍 Langue / Language</label>
+                <select class="form-select" id="language">
+                    <option value="fr">Français 🇫🇷</option>
+                    <option value="en">English 🇬🇧</option>
+                    <option value="kr">한국어 🇰🇷</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🧬 Identifiant Galactique</label>
+                <input type="text" class="form-input" id="userId" placeholder="Ex: morgan-001" maxlength="20">
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onclick="enterPortal()">✨ ENTREZ DANS LE PORTAIL</button>
+                <button class="btn btn-secondary" onclick="generateQR()">📱 Générer QR Code</button>
+                <button class="btn btn-staff" onclick="toggleStaffAccess()">🔐 Accès Personnel</button>
+            </div>
+        </section>
+
+        <!-- Staff login panel -->
+        <div class="panel panel-staff" id="staffPanel">
+            <h3 style="color: var(--warning-orange); margin-bottom: 1rem;">🔐 Accès Personnel Sécurisé</h3>
+            <div class="form-group">
+                <input type="password" class="form-input" id="staffCode" placeholder="Code d'accès personnel" maxlength="20">
+            </div>
+            <button class="btn btn-staff" onclick="staffLogin()">SE CONNECTER</button>
+            <div id="staffError" style="color: #ff4444; margin-top: 1rem; display: none;"></div>
+            <div id="staffLoading" style="color: var(--primary-cyan); margin-top: 1rem; display: none;">Connexion en cours...</div>
+        </div>
+
+        <!-- Admin panel -->
+        <div class="panel" id="adminPanel">
+            <h3 style="color: var(--primary-cyan); margin-bottom: 1rem;">🎛 Panneau d'Administration Galactique</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <button class="btn" onclick="openDashboard()">📊 Tableau de Bord</button>
+                <button class="btn" onclick="openMonitoring()">👁 Surveillance</button>
+                <button class="btn" onclick="openContentManager()">📝 Gestion Contenu</button>
+                <button class="btn" onclick="openAnalytics()">📈 Analytics</button>
+                <button class="btn btn-secondary" onclick="clearCache()">🗑 Vider Cache</button>
+                <button class="btn btn-secondary" onclick="viewLogs()">📋 Voir Logs</button>
+            </div>
+        </div>
+    </main>
 
     <script>
-        class GalacticSystem {
-            constructor() {
-                this.currentUser = null;
-                this.staffSession = false;
-                this.currentPage = 'home';
-                this.securityLogs = [];
-                this.activeUsers = [];
-                this.fileSystem = new Map();
-                this.monitoringActive = false;
-                this.analyticsData = { visits: 0, pageViews: 0, sessions: [] };
-                
-                this.init();
-            }
+        // Global variables
+        let currentUser = null;
+        let staffSession = false;
+        let securityLogs = [];
+        let visitorCount = 0;
+        let staffCount = 0;
+        let siteStartTime = Date.now();
 
-            // MODIFICATION PRINCIPALE : Système d'accès libre avec avertissements
-            showPage(pageId) {
-                // Cache toutes les pages
-                document.querySelectorAll('.page-section, .dashboard-section').forEach(page => {
-                    page.style.display = 'none';
-                });
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStars();
+            loadStatistics();
+            initializeMonitoring();
+            setInterval(updateStatistics, 5000);
+        });
 
-                // Vérifie les permissions mais laisse passer quand même
-                const pagePermissions = {
-                    'dashboard': ['user'],
-                    'monitoring': ['staff'],
-                    'content': ['admin'],
-                    'analytics': ['admin'],
-                    'security': ['staff']
-                };
-
-                const requiredPerms = pagePermissions[pageId] || [];
-                const hasPermission = this.checkPermission(requiredPerms);
-                
-                // Affiche la page sélectionnée
-                const page = document.getElementById(pageId + 'Page');
-                if (page) {
-                    page.style.display = pageId === 'home' ? 'flex' : 'block';
-                    this.currentPage = pageId;
-                    
-                    // Enregistre la vue de page
-                    this.recordPageView(pageId);
-                    
-                    // Affiche un avertissement si pas les bonnes permissions
-                    if (!hasPermission && requiredPerms.length > 0) {
-                        this.showAccessWarning(pageId, requiredPerms);
-                    } else if (hasPermission) {
-                        this.showAccessGranted(pageId);
-                    }
-                    
-                    // Lance les fonctionnalités spécifiques
-                    this.startPageFeatures(pageId);
-                }
-            }
-
-            checkPermission(requiredPerms) {
-                if (!this.currentUser && requiredPerms.includes('user')) return false;
-                if (!this.currentUser) return false;
-                
-                // Vérifie chaque permission requise
-                for (let perm of requiredPerms) {
-                    if (perm === 'user' && this.currentUser) return true;
-                    if (perm === 'staff' && this.staffSession) return true;
-                    if (perm === 'admin' && this.currentUser.isAdmin) return true;
-                }
-                
-                return requiredPerms.length === 0; // Si aucune permission requise
-            }
-
-            showAccessWarning(pageId, requiredPerms) {
-                const page = document.getElementById(pageId + 'Page');
-                const warning = document.createElement('div');
-                warning.className = 'access-warning';
-                warning.innerHTML = `
-                    <h3>⚠️ Accès Limité</h3>
-                    <p>Vous n'avez pas les permissions complètes pour cette page.</p>
-                    <p><strong>Permissions requises:</strong> ${requiredPerms.join(', ')}</p>
-                    <p><strong>Vos permissions:</strong> ${this.getUserPermissionLevel()}</p>
-                    <button class="btn btn-secondary" onclick="this.parentElement.remove()">Compris</button>
-                `;
-                
-                // Insère l'avertissement au début de la page
-                page.insertBefore(warning, page.firstChild);
-                
-                // Active tout de même certaines fonctionnalités de base
-                setTimeout(() => {
-                    this.enableBasicFeatures(pageId);
-                }, 1000);
-            }
-
-            showAccessGranted(pageId) {
-                const page = document.getElementById(pageId + 'Page');
-                const granted = document.createElement('div');
-                granted.className = 'access-granted';
-                granted.innerHTML = `
-                    <h3>✅ Accès Complet</h3>
-                    <p>Vous avez accès à toutes les fonctionnalités de cette page.</p>
-                    <button class="btn btn-primary" onclick="this.parentElement.remove()">Super !</button>
-                `;
-                
-                page.insertBefore(granted, page.firstChild);
-                
-                setTimeout(() => {
-                    granted.remove();
-                }, 3000);
-            }
-
-            getUserPermissionLevel() {
-                if (!this.currentUser) return 'Aucune (non connecté)';
-                if (this.currentUser.isAdmin) return 'Administrateur';
-                if (this.staffSession) return 'Personnel + Utilisateur';
-                return 'Utilisateur';
-            }
-
-            enableBasicFeatures(pageId) {
-                // Active les fonctionnalités de base même sans permissions complètes
-                switch(pageId) {
-                    case 'dashboard':
-                        this.updateStatistics();
-                        break;
-                    case 'monitoring':
-                        this.startRealTimeMonitoring();
-                        break;
-                    case 'content':
-                        this.updateFileList();
-                        break;
-                    case 'analytics':
-                        this.updateAnalyticsDisplay();
-                        break;
-                    case 'security':
-                        this.updateSecurityLogs();
-                        break;
-                }
-            }
-
-            startPageFeatures(pageId) {
-                // Lance les fonctionnalités avancées si permissions suffisantes
-                if (this.checkPermission(['user'])) {
-                    switch(pageId) {
-                        case 'dashboard':
-                            this.updateStatistics();
-                            break;
-                        case 'monitoring':
-                            if (this.checkPermission(['staff'])) {
-                                this.startRealTimeMonitoring();
-                            } else {
-                                this.enableBasicFeatures(pageId);
-                            }
-                            break;
-                        case 'content':
-                            if (this.checkPermission(['admin'])) {
-                                this.initializeFileSystem();
-                            } else {
-                                this.enableBasicFeatures(pageId);
-                            }
-                            break;
-                        case 'analytics':
-                            if (this.checkPermission(['admin'])) {
-                                this.updateAnalyticsDisplay();
-                            } else {
-                                this.enableBasicFeatures(pageId);
-                            }
-                            break;
-                        case 'security':
-                            if (this.checkPermission(['staff'])) {
-                                this.updateSecurityLogs();
-                            } else {
-                                this.enableBasicFeatures(pageId);
-                            }
-                            break;
-                    }
-                } else {
-                    // Utilisateur non connecté - accès très limité
-                    this.showNotification('Connectez-vous pour plus de fonctionnalités', 'warning');
-                }
-            }
-
-            // MODIFICATION : Navigation toujours visible mais avec indicateurs
-            updateNavigation() {
-                if (!this.currentUser) {
-                    // Si pas connecté, montre tout mais avec des icônes de verrou
-                    document.querySelectorAll('.nav-link').forEach(link => {
-                        if (link.id && link.id.startsWith('nav')) {
-                            link.style.display = 'block';
-                            if (!link.textContent.includes('🔒')) {
-                                link.innerHTML = '🔒 ' + link.textContent;
-                            }
-                        }
-                    });
-                    return;
-                }
-
-                // Connecté - montre tout avec indicateurs de permission
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    if (link.id && link.id.startsWith('nav')) {
-                        const pageId = link.id.replace('nav', '').toLowerCase();
-                        const hasAccess = this.checkPagePermission(pageId);
-                        
-                        link.style.display = 'block';
-                        
-                        // Ajoute des icônes de permission
-                        if (hasAccess) {
-                            link.innerHTML = '✅ ' + link.textContent.replace(/[🔒✅⚠️]/g, '');
-                        } else {
-                            link.innerHTML = '⚠️ ' + link.textContent.replace(/[🔒✅⚠️]/g, '');
-                        }
-                    }
-                });
-            }
-
-            checkPagePermission(pageId) {
-                const pagePermissions = {
-                    'dashboard': ['user'],
-                    'monitoring': ['staff'],
-                    'content': ['admin'],
-                    'analytics': ['admin'],
-                    'security': ['staff']
-                };
-                
-                const required = pagePermissions[pageId] || [];
-                return this.checkPermission(required);
-            }
-
-            // Le reste du code reste identique mais avec cette nouvelle logique d'accès
-            // Les méthodes like staffLogin(), updateStatistics(), etc. restent les mêmes
-            
-            // ... (insère ici tout le reste du code JavaScript précédent)
-            
-            // Une petite modification pour que les boutons de navigation fonctionnent toujours
-            showPage(pageId) {
-                // ... (code existant)
-                
-                // MAIS on laisse toujours passer vers la page
-                if (page) {
-                    page.style.display = pageId === 'home' ? 'flex' : 'block';
-                    this.currentPage = pageId;
-                    this.recordPageView(pageId);
-                    
-                    if (!hasPermission && requiredPerms.length > 0) {
-                        this.showAccessWarning(pageId, requiredPerms);
-                    } else if (hasPermission) {
-                        this.showAccessGranted(pageId);
-                    }
-                    
-                    this.startPageFeatures(pageId);
-                }
+        // Animated background
+        function initializeStars() {
+            const starsBg = document.getElementById('starsBg');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsBg.appendChild(star);
             }
         }
 
-        // ====================================================================
-        // 🚀 INITIALISATION ET FONCTIONS GLOBALES
-        // ====================================================================
-
-        let galacticSystem;
-
-        // Global functions
+        // Portal entry
         function enterPortal() {
-            if (!galacticSystem) galacticSystem = new GalacticSystem();
-            galacticSystem.enterPortal();
+            const userId = document.getElementById('userId').value.trim();
+            const language = document.getElementById('language').value;
+
+            if (!userId || !/^([a-zA-Z0-9-_]+)$/.test(userId)) {
+                showNotification('Identifiant invalide', 'error');
+                return;
+            }
+
+            // Create user session
+            currentUser = {
+                id: userId,
+                language: language,
+                loginTime: new Date().toISOString(),
+                isAdmin: userId.toLowerCase().includes('root') || userId === 'iam24morgan'
+            };
+
+            // Update statistics
+            visitorCount++;
+            localStorage.setItem('visitorCount', visitorCount);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Log security event
+            logSecurityEvent('USER_LOGIN', { userId, language });
+
+            // Show admin panel if admin
+            if (currentUser.isAdmin) {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+
+            showNotification('✅ Connexion réussie! Redirection...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = `dashboard.html?user=${userId}&lang=${language}&admin=${currentUser.isAdmin}`;
+            }, 1500);
+        }
+
+        // Staff login
+        function toggleStaffAccess() {
+            const panel = document.getElementById('staffPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
 
         function staffLogin() {
-            galacticSystem.staffLogin();
+            const code = document.getElementById('staffCode').value.trim();
+            const errorDiv = document.getElementById('staffError');
+            const loadingDiv = document.getElementById('staffLoading');
+
+            if (!code) {
+                errorDiv.textContent = 'Veuillez entrer le code personnel';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                
+                if (code === 'Morning_Starr') {
+                    staffSession = true;
+                    staffCount++;
+                    localStorage.setItem('staffCount', staffCount);
+                    localStorage.setItem('staffSession', 'true');
+                    
+                    logSecurityEvent('STAFF_LOGIN', { code: 'SUCCESS' });
+                    
+                    document.getElementById('staffPanel').style.display = 'none';
+                    showNotification('🔓 Accès personnel accordé!', 'success');
+                    
+                    // Open staff dashboard
+                    setTimeout(() => {
+                        window.location.href = 'staff-dashboard.html';
+                    }, 1000);
+                } else {
+                    errorDiv.textContent = '❌ Code incorrect - Tentative enregistrée';
+                    errorDiv.style.display = 'block';
+                    logSecurityEvent('FAILED_STAFF_LOGIN', { code: code });
+                }
+            }, 2000);
         }
 
-        function toggleStaffAccess() {
-            galacticSystem.toggleStaffAccess();
+        // Statistics and monitoring
+        function loadStatistics() {
+            visitorCount = parseInt(localStorage.getItem('visitorCount') || '0');
+            staffCount = parseInt(localStorage.getItem('staffCount') || '0');
+            updateStatistics();
         }
 
-        function generateQR() {
-            galacticSystem.generateQR();
-        }
-
-        function showPage(pageId) {
-            galacticSystem.showPage(pageId);
-        }
-
-        function logout() {
-            galacticSystem.logout();
-        }
-
-        // ... (toutes les autres fonctions restent identiques)
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            galacticSystem = new GalacticSystem();
+        function updateStatistics() {
+            document.getElementById('visitorCount').textContent = visitorCount;
+            document.getElementById('staffCount').textContent = staffCount;
             
-            // Montre toujours la navigation mais avec des indicateurs
-            document.getElementById('mainHeader').style.display = 'block';
-            galacticSystem.updateNavigation();
-        });
+            const uptime = Date.now() - siteStartTime;
+            const hours = Math.floor(uptime / (1000 * 60 * 60));
+            const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+            
+            // Performance calculation
+            const performance = Math.max(0, Math.min(100, 100 - (securityLogs.length * 0.5)));
+            document.getElementById('performance').textContent = `${Math.round(performance)}%`;
+        }
+
+        // Security and logging
+        function logSecurityEvent(event, data) {
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                event: event,
+                data: data,
+                user: currentUser?.id || 'anonymous'
+            };
+            
+            securityLogs.push(logEntry);
+            localStorage.setItem('securityLogs', JSON.stringify(securityLogs.slice(-100)));
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 2rem;
+                background: ${type === 'success' ? 'var(--success-green)' : 'var(--warning-orange)'};
+                color: white;
+                border-radius: 10px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Utility functions
+        function generateQR() {
+            const userId = document.getElementById('userId').value.trim();
+            if (!userId) {
+                showNotification('Entrez un identifiant d\'abord', 'error');
+                return;
+            }
+            
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(userId)}&size=300x300&color=00fff7&bgcolor=000011`;
+            window.open(qrUrl, '_blank');
+        }
+
+        function clearCache() {
+            localStorage.clear();
+            securityLogs = [];
+            showNotification('Cache vidé avec succès', 'success');
+        }
+
+        function viewLogs() {
+            const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+            const recentLogs = logs.slice(-10);
+            let logText = '📋 Logs de sécurité récents:\n\n';
+            recentLogs.forEach(log => {
+                logText += `[${new Date(log.timestamp).toLocaleTimeString()}] ${log.event}\n`;
+            });
+            alert(logText);
+        }
+
+        function initializeMonitoring() {
+            // Monitor errors
+            window.addEventListener('error', (e) => {
+                logSecurityEvent('JS_ERROR', {
+                    message: e.message,
+                    filename: e.filename,
+                    line: e.lineno
+                });
+            });
+            
+            // Monitor performance
+            setInterval(() => {
+                const memory = performance.memory;
+                if (memory) {
+                    const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+                    if (usedMB > 100) {
+                        logSecurityEvent('HIGH_MEMORY_USAGE', { usage: usedMB });
+                    }
+                }
+            }, 30000);
+        }
+
+        // Page navigation
+        function showSection(section) {
+            // Implementation for SPA navigation
+            console.log(`Navigating to: ${section}`);
+        }
+
+        function openDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function openMonitoring() {
+            window.location.href = 'monitoring.html';
+        }
+
+        function openContentManager() {
+            window.location.href = 'content-manager.html';
+        }
+
+        function openAnalytics() {
+            window.location.href = 'analytics.html';
+        }
     </script>
 </body>
 </html>
