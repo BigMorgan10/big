@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁 Surveillance en Temps Réel - Big M</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000011;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+
+        .monitoring-container {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .monitoring-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border: 2px solid #00ff00;
+            padding: 2rem;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .monitoring-title {
+            font-size: 2.5rem;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 1rem;
+        }
+
+        /* Grid surveillance */
+        .surveillance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .surveillance-panel {
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 1.5rem;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .panel-title {
+            font-size: 1.3rem;
+            color: #00ff00;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Terminal style */
+        .terminal {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            padding: 1rem;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.3rem;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .terminal-input {
+            color: #ffffff;
+        }
+
+        .terminal-output {
+            color: #00ff00;
+        }
+
+        .terminal-error {
+            color: #ff4444;
+        }
+
+        .terminal-warning {
+            color: #ffaa00;
+        }
+
+        /* Network map */
+        .network-map {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .network-node {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .network-connection {
+            width: 2px;
+            height: 40px;
+            background: #00ff00;
+            margin: -0.5rem 0;
+        }
+
+        /* Alert system */
+        .alert-system {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
+        .alert {
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 1rem 2rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            animation: slideIn 0.5s ease;
+            border: 2px solid #ff0000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Real-time metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="monitoring-container">
+        <div class="monitoring-header">
+            <h1 class="monitoring-title">👁 SURVEILLANCE EN TEMPS RÉEL</h1>
+            <p>Système de monitoring galactique - Big M 모건</p>
+            <div style="margin-top: 1rem;">
+                <span id="systemStatus" style="color: #00ff00;">🟢 SYSTEME OPERATIONNEL</span>
+                | <span id="lastUpdate">Dernière mise à jour: --:--:--</span>
+            </div>
+        </div>
+
+        <!-- Real-time metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="cpuUsage">0%</div>
+                <div class="metric-label">CPU Usage</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="memoryUsage">0%</div>
+                <div class="metric-label">Memory Usage</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="networkTraffic">0</div>
+                <div class="metric-label">Network (MB/s)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="activeConnections">0</div>
+                <div class="metric-label">Connections</div>
+            </div>
+        </div>
+
+        <!-- Surveillance panels -->
+        <div class="surveillance-grid">
+            <!-- System logs -->
+            <div class="surveillance-panel">
+                <h3 class="panel-title">📋 Logs Système</h3>
+                <div class="terminal" id="systemLogs"></div>
+            </div>
+
+            <!-- Security events -->
+            <div class="surveillance-panel">
+                <h3 class="panel-title">🔒 Événements de Sécurité</h3>
+                <div class="terminal" id="securityLogs"></div>
+            </div>
+
+            <!-- Network monitoring -->
+            <div class="surveillance-panel">
+                <h3 class="panel-title">🌐 Réseau</h3>
+                <div class="network-map">
+                    <div class="network-node">WEB</div>
+                    <div class="network-connection"></div>
+                    <div class="network-node">DB</div>
+                    <div class="network-connection"></div>
+                    <div class="network-node">CDN</div>
+                </div>
+            </div>
+
+            <!-- User activity -->
+            <div class="surveillance-panel">
+                <h3 class="panel-title">👤 Activité Utilisateurs</h3>
+                <div class="terminal" id="userActivity"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert system -->
+    <div class="alert-system" id="alertSystem"></div>
+
+    <script>
+        // Surveillance system
+        class SurveillanceSystem {
+            constructor() {
+                this.monitoring = true;
+                this.alerts = [];
+                this.init();
+            }
+
+            init() {
+                this.startMonitoring();
+                this.updateTimestamp();
+                setInterval(() => this.updateTimestamp(), 1000);
+            }
+
+            startMonitoring() {
+                // Simulate real-time data
+                setInterval(() => this.updateMetrics(), 2000);
+                setInterval(() => this.generateSystemLogs(), 3000);
+                setInterval(() => this.generateSecurityLogs(), 5000);
+                setInterval(() => this.generateUserActivity(), 4000);
+            }
+
+            updateTimestamp() {
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `Dernière mise à jour: ${now.toLocaleTimeString()}`;
+            }
+
+            updateMetrics() {
+                // CPU Usage
+                const cpu = Math.floor(Math.random() * 30) + 20;
+                document.getElementById('cpuUsage').textContent = `${cpu}%`;
+
+                // Memory Usage
+                const memory = Math.floor(Math.random() * 40) + 30;
+                document.getElementById('memoryUsage').textContent = `${memory}%`;
+
+                // Network Traffic
+                const network = (Math.random() * 50 + 10).toFixed(1);
+                document.getElementById('networkTraffic').textContent = network;
+
+                // Active Connections
+                const connections = Math.floor(Math.random() * 50) + 10;
+                document.getElementById('activeConnections').textContent = connections;
+
+                // Check for anomalies
+                if (cpu > 80 || memory > 85) {
+                    this.createAlert(`Haute utilisation détectée - CPU: ${cpu}%, Mémoire: ${memory}%`);
+                }
+            }
+
+            generateSystemLogs() {
+                const logs = [
+                    'Système de surveillance activé',
+                    'Scan réseau complété',
+                    'Mise à jour des signatures de sécurité',
+                    'Backup automatique effectué',
+                    'Nettoyage du cache système',
+                    'Vérification de l\'intégrité des fichiers'
+                ];
+
+                const randomLog = logs[Math.floor(Math.random() * logs.length)];
+                this.addTerminalLine('systemLogs', randomLog, 'output');
+            }
+
+            generateSecurityLogs() {
+                const events = [
+                    { type: 'output', message: 'Scan de sécurité terminé - Aucune menace détectée' },
+                    { type: 'warning', message: 'Tentative de connexion non autorisée détectée' },
+                    { type: 'output', message: 'Firewall actif et opérationnel' },
+                    { type: 'warning', message: 'Activité suspecte sur le port 8080' },
+                    { type: 'output', message: 'Certificat SSL valide' }
+                ];
+
+                const event = events[Math.floor(Math.random() * events.length)];
+                this.addTerminalLine('securityLogs', event.message, event.type);
+            }
+
+            generateUserActivity() {
+                const activities = [
+                    'Nouvel utilisateur connecté: user-7841',
+                    'Session terminée: user-5523',
+                    'Accès page dashboard: user-9982',
+                    'Téléchargement de fichier: user-1145',
+                    'Modification profil: user-6678',
+                    'Accès refusé: user-0000'
+                ];
+
+                const activity = activities[Math.floor(Math.random() * activities.length)];
+                this.addTerminalLine('userActivity', activity, 'input');
+            }
+
+            addTerminalLine(terminalId, message, type = 'output') {
+                const terminal = document.getElementById(terminalId);
+                const line = document.createElement('div');
+                line.className = `terminal-line terminal-${type}`;
+                
+                const timestamp = new Date().toLocaleTimeString();
+                line.textContent = `[${timestamp}] ${message}`;
+                
+                terminal.appendChild(line);
+                terminal.scrollTop = terminal.scrollHeight;
+                
+                // Limit lines
+                if (terminal.children.length > 50) {
+                    terminal.removeChild(terminal.firstChild);
+                }
+            }
+
+            createAlert(message) {
+                const alertSystem = document.getElementById('alertSystem');
+                const alert = document.createElement('div');
+                alert.className = 'alert';
+                alert.textContent = `🚨 ALERTE: ${message}`;
+                
+                alertSystem.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+        }
+
+        // Initialize surveillance
+        const surveillance = new SurveillanceSystem();
+
+        // Additional monitoring functions
+        function checkSystemHealth() {
+            const memory = performance.memory;
+            if (memory) {
+                const usedPercent = (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100;
+                if (usedPercent > 90) {
+                    surveillance.createAlert('Mémoire système critique');
+                }
+            }
+        }
+
+        // Monitor every 30 seconds
+        setInterval(checkSystemHealth, 30000);
+    </script>
+</body>
+</html>
