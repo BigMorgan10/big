@@ -1,0 +1,86 @@
+
+### 6. **FICHIER DE CONFIGURATION GLOBALE (config.js)**
+
+```javascript
+// Global Configuration
+const GALACTIC_CONFIG = {
+    // System settings
+    system: {
+        name: "Big M 모건 - Portail Galactique",
+        version: "2.0.0",
+        build: "20241022",
+        environment: "production",
+        maintenance: false
+    },
+
+    // Security settings
+    security: {
+        staffCode: "Morning_Starr",
+        sessionTimeout: 3600000, // 1 hour
+        maxLoginAttempts: 3,
+        passwordMinLength: 8,
+        enable2FA: false,
+        encryptionKey: "galactic-encryption-2024"
+    },
+
+    // Access levels
+    access: {
+        public: ["home", "about", "contact"],
+        user: ["dashboard", "profile", "settings"],
+        staff: ["monitoring", "security", "logs"],
+        admin: ["content", "analytics", "users", "system"]
+    },
+
+    // Monitoring settings
+    monitoring: {
+        enableRealTime: true,
+        updateInterval: 5000,
+        alertThresholds: {
+            cpu: 80,
+            memory: 85,
+            disk: 90,
+            network: 100
+        }
+    },
+
+    // Content settings
+    content: {
+        maxUploadSize: 10485760, // 10MB
+        allowedTypes: ["image/jpeg", "image/png", "image/gif", "video/mp4", "application/pdf", "text/html", "text/css", "application/javascript"],
+        enableVersioning: true,
+        autoBackup: true,
+        backupInterval: 86400000 // 24 hours
+    },
+
+    // Performance settings
+    performance: {
+        cacheEnabled: true,
+        cacheDuration: 300000, // 5 minutes
+        compressAssets: true,
+        lazyLoad: true,
+        preloadCritical: true
+    },
+
+    // UI settings
+    ui: {
+        theme: "dark",
+        animations: true,
+        soundEffects: false,
+        language: "fr",
+        dateFormat: "DD/MM/YYYY",
+        timezone: "Europe/Paris"
+    },
+
+    // API settings
+    api: {
+        baseUrl: window.location.origin,
+        timeout: 30000,
+        retryAttempts: 3,
+        rateLimit: 100
+    }
+};
+
+// Export configuration
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = GALACTIC_CONFIG;
+}
