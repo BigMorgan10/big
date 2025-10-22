@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎛 Tableau de Bord Galactique - Big M</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-cyan: #00fff7;
+            --deep-purple: #1a0033;
+            --neon-pink: #ff00ff;
+            --electric-blue: #0080ff;
+            --warning-orange: #ff6b35;
+            --success-green: #00ff88;
+            --bg-dark: #000011;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #000011 0%, #001122 50%, #000033 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 17, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--primary-cyan);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Main dashboard */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Grid layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-card {
+            background: rgba(0, 17, 34, 0.9);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 247, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--primary-cyan);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+        }
+
+        .card-content {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: rgba(0, 17, 34, 0.9);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--primary-cyan);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-btn {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(45deg, var(--electric-blue), var(--primary-cyan));
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 247, 0.4);
+        }
+
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-online { background: var(--success-green); }
+        .status-warning { background: var(--warning-orange); }
+        .status-offline { background: #ff4444; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🎛 Tableau de Bord Galactique</div>
+            <div class="user-info">
+                <span id="currentUser">Utilisateur: <span id="userIdDisplay"></span></span>
+                <button class="action-btn" onclick="logout()">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Tableau de Bord Central</h1>
+            <p>Contrôle total de votre portail galactique</p>
+        </div>
+
+        <!-- Statistics cards -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">Visiteurs Actifs</h3>
+                    <span class="card-icon">👥</span>
+                </div>
+                <div class="card-content" id="activeVisitors">0</div>
+                <div class="card-subtitle">Utilisateurs connectés</div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">Sessions Staff</h3>
+                    <span class="card-icon">🔐</span>
+                </div>
+                <div class="card-content" id="staffSessions">0</div>
+                <div class="card-subtitle">Personnel en ligne</div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance Système</h3>
+                    <span class="card-icon">⚡</span>
+                </div>
+                <div class="card-content" id="systemPerformance">100%</div>
+                <div class="card-subtitle">État optimal</div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">Sécurité</h3>
+                    <span class="card-icon">🛡</span>
+                </div>
+                <div class="card-content" id="securityStatus">🔒</div>
+                <div class="card-subtitle">Système sécurisé</div>
+            </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="quick-actions">
+            <button class="action-btn" onclick="navigateTo('monitoring')">👁 Surveillance en Temps Réel</button>
+            <button class="action-btn" onclick="navigateTo('content')">📝 Gestion de Contenu</button>
+            <button class="action-btn" onclick="navigateTo('analytics')">📈 Analytics Avancés</button>
+            <button class="action-btn" onclick="navigateTo('users')">👤 Gestion Utilisateurs</button>
+            <button class="action-btn" onclick="navigateTo('security')">🔒 Centre de Sécurité</button>
+            <button class="action-btn" onclick="navigateTo('settings')">⚙ Configuration Système</button>
+        </div>
+
+        <!-- Activity chart -->
+        <div class="chart-container">
+            <h3 class="chart-title">📊 Activité en Temps Réel</h3>
+            <canvas id="activityChart" width="800" height="300"></canvas>
+        </div>
+
+        <!-- System status -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">État des Serveurs</h3>
+                    <span class="card-icon">🖥</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <span class="status-indicator status-online"></span>
+                        Serveur Principal: <strong>En ligne</strong>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <span class="status-indicator status-online"></span>
+                        Base de données: <strong>Active</strong>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <span class="status-indicator status-warning"></span>
+                        CDN: <strong>Latence élevée</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">Alertes Récentes</h3>
+                    <span class="card-icon">🚨</span>
+                </div>
+                <div id="recentAlerts" style="margin-top: 1rem;">
+                    <div style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        🟡 Tentative de connexion échouée - 2 min
+                    </div>
+                    <div style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        🟢 Nouvelle session staff - 5 min
+                    </div>
+                    <div style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        🔵 Mise à jour système - 15 min
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+            initializeCharts();
+            updateDashboard();
+            setInterval(updateDashboard, 5000);
+        });
+
+        // Load user information
+        function loadUserInfo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user') || 'Invité';
+            document.getElementById('userIdDisplay').textContent = userId;
+        }
+
+        // Update dashboard data
+        function updateDashboard() {
+            // Update visitor count
+            const visitors = parseInt(localStorage.getItem('visitorCount') || '0');
+            document.getElementById('activeVisitors').textContent = visitors;
+
+            // Update staff sessions
+            const staff = parseInt(localStorage.getItem('staffCount') || '0');
+            document.getElementById('staffSessions').textContent = staff;
+
+            // Update performance
+            const memory = performance.memory;
+            if (memory) {
+                const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+                const performance = Math.max(0, 100 - (usedMB / 10));
+                document.getElementById('systemPerformance').textContent = `${Math.round(performance)}%`;
+            }
+
+            // Update security status
+            const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+            const recentErrors = logs.filter(log => 
+                log.event === 'JS_ERROR' && 
+                new Date() - new Date(log.timestamp) < 300000
+            ).length;
+            
+            const securityStatus = recentErrors > 0 ? '⚠️' : '🔒';
+            document.getElementById('securityStatus').textContent = securityStatus;
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            const canvas = document.getElementById('activityChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Simple line chart
+            const data = [];
+            const labels = [];
+            
+            for (let i = 0; i < 24; i++) {
+                data.push(Math.floor(Math.random() * 100));
+                labels.push(`${i}:00`);
+            }
+            
+            drawLineChart(ctx, labels, data);
+        }
+
+        function drawLineChart(ctx, labels, data) {
+            const canvas = ctx.canvas;
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i <= 10; i++) {
+                const y = (height - 40) * i / 10 + 20;
+                ctx.beginPath();
+                ctx.moveTo(40, y);
+                ctx.lineTo(width - 20, y);
+                ctx.stroke();
+            }
+            
+            // Draw line
+            ctx.strokeStyle = '#00fff7';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            const stepX = (width - 60) / (data.length - 1);
+            const maxValue = Math.max(...data);
+            
+            data.forEach((value, index) => {
+                const x = 40 + index * stepX;
+                const y = height - 40 - (value / maxValue) * (height - 60);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Draw points
+            ctx.fillStyle = '#00fff7';
+            data.forEach((value, index) => {
+                const x = 40 + index * stepX;
+                const y = height - 40 - (value / maxValue) * (height - 60);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        }
+
+        // Navigation
+        function navigateTo(page) {
+            const pages = {
+                'monitoring': 'monitoring.html',
+                'content': 'content-manager.html',
+                'analytics': 'analytics.html',
+                'users': 'user-manager.html',
+                'security': 'security-center.html',
+                'settings': 'settings.html'
+            };
+            
+            if (pages[page]) {
+                window.location.href = pages[page];
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
