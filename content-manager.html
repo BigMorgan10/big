@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Gestionnaire de Contenu - Big M</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .content-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4ff, #090979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Content sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* File upload */
+        .upload-area {
+            border: 2px dashed #00d4ff;
+            border-radius: 10px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #ffffff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Content list */
+        .content-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .content-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .content-item:hover {
+            border-color: #00d4ff;
+            transform: translateX(5px);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-meta {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Editor */
+        .editor-container {
+            margin-top: 2rem;
+        }
+
+        .editor-toolbar {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-content {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: 1px solid #333;
+            border-radius: 0 0 8px 8px;
+            padding: 1rem;
+            min-height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-container">
+        <div class="content-header">
+            <h1 class="content-title">📝 Gestionnaire de Contenu Centrale</h1>
+            <p>Administrez tout le contenu de votre portail galactique</p>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="quick-actions">
+            <div class="action-card" onclick="createNewContent()">
+                <div class="action-icon">🆕</div>
+                <div class="action-title">Nouveau Contenu</div>
+                <div class="action-description">Créer une nouvelle page ou section</div>
+            </div>
+            <div class="action-card" onclick="uploadMedia()">
+                <div class="action-icon">📤</div>
+                <div class="action-title">Uploader Média</div>
+                <div class="action-description">Images, vidéos, documents</div>
+            </div>
+            <div class="action-card" onclick="manageTemplates()">
+                <div class="action-icon">🎨</div>
+                <div class="action-title">Gérer Templates</div>
+                <div class="action-description">Modèles et thèmes</div>
+            </div>
+            <div class="action-card" onclick="bulkOperations()">
+                <div class="action-icon">⚡</div>
+                <div class="action-title">Opérations Bulk</div>
+                <div class="action-description">Actions massives</div>
+            </div>
+        </div>
+
+        <!-- Content sections -->
+        <div class="content-grid">
+            <!-- Upload section -->
+            <div class="content-section">
+                <h3 class="section-title">📤 Zone de Téléchargement</h3>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">☁️</div>
+                    <p>Cliquez ici ou glissez-déposez vos fichiers</p>
+                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 0.5rem;">
+                        Formats acceptés: Images, Vidéos, PDF, HTML, CSS, JS
+                    </p>
+                </div>
+                <input type="file" id="fileInput" style="display: none;" multiple accept="image/*,video/*,.pdf,.html,.css,.js">
+            </div>
+
+            <!-- Recent content -->
+            <div class="content-section">
+                <h3 class="section-title">📄 Contenu Récent</h3>
+                <div class="content-list" id="recentContent">
+                    <div class="content-item">
+                        <div class="item-info">
+                            <div class="item-title">Page d'accueil - Version 2.5</div>
+                            <div class="item-meta">Modifié il y a 2 heures | Taille: 24.5 KB</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editContent('home')">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteContent('home')">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="item-info">
+                            <div class="item-title">Dashboard Admin</div>
+                            <div class="item-meta">Modifié il y a 5 heures | Taille: 45.2 KB</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editContent('dashboard')">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteContent('dashboard')">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="content-item">
+                        <div class="item-info">
+                            <div class="item-title">Système de surveillance</div>
+                            <div class="item-meta">Modifié il y a 1 jour | Taille: 38.7 KB</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editContent('monitoring')">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteContent('monitoring')">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor section -->
+        <div class="content-section">
+            <h3 class="section-title">✏️ Éditeur de Code</h3>
+            <div class="editor-container">
+                <div class="editor-toolbar">
+                    <button class="btn btn-primary" onclick="saveContent()">💾 Sauvegarder</button>
+                    <button class="btn" onclick="previewContent()">👁️ Aperçu</button>
+                    <button class="btn" onclick="formatCode()">🎨 Formater</button>
+                    <select class="btn" onchange="changeLanguage(this.value)">
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="json">JSON</option>
+                    </select>
+                </div>
+                <div class="editor-content" contenteditable="true" id="codeEditor">
+<!-- Code HTML de démonstration -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Page Galactique</title>
+</head>
+<body>
+    <h1>Bienvenue dans l'univers Big M</h1>
+    <p>Contenu éditable en temps réel...</p>
+</body>
+</html>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Content management system
+        class ContentManager {
+            constructor() {
+                this.content = new Map();
+                this.templates = new Map();
+                this.loadContent();
+                this.initializeEditor();
+            }
+
+            loadContent() {
+                // Load content from localStorage
+                const savedContent = localStorage.getItem('content');
+                if (savedContent) {
+                    const contentData = JSON.parse(savedContent);
+                    contentData.forEach(item => {
+                        this.content.set(item.id, item);
+                    });
+                }
+            }
+
+            saveContent() {
+                const contentArray = Array.from(this.content.values());
+                localStorage.setItem('content', JSON.stringify(contentArray));
+                this.showNotification('Contenu sauvegardé avec succès', 'success');
+            }
+
+            initializeEditor() {
+                const editor = document.getElementById('codeEditor');
+                editor.addEventListener('input', (e) => {
+                    this.highlightSyntax(e.target);
+                });
+            }
+
+            highlightSyntax(element) {
+                // Basic syntax highlighting
+                let text = element.innerText;
+                
+                // HTML tags
+                text = text.replace(/&lt;([^&]+)&gt;/g, '<span style="color: #569cd6">&lt;$1&gt;</span>');
+                
+                // Strings
+                text = text.replace(/"([^"]*)"/g, '<span style="color: #ce9178">"$1"</span>');
+                
+                element.innerHTML = text;
+            }
+
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 2rem;
+                    background: ${type === 'success' ? '#00ff88' : '#ff4444'};
+                    color: white;
+                    border-radius: 5px;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.remove(), 3000);
+            }
+        }
+
+        // Initialize content manager
+        const contentManager = new ContentManager();
+
+        // UI Functions
+        function createNewContent() {
+            const title = prompt('Nom du nouveau contenu:');
+            if (title) {
+                const content = {
+                    id: Date.now().toString(),
+                    title: title,
+                    type: 'html',
+                    content: '',
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString()
+                };
+                contentManager.content.set(content.id, content);
+                contentManager.saveContent();
+                location.reload();
+            }
+        }
+
+        function uploadMedia() {
+            document.getElementById('fileInput').click();
+        }
+
+        function manageTemplates() {
+            alert('Gestionnaire de templates - Fonctionnalité en développement');
+        }
+
+        function bulkOperations() {
+            alert('Opérations bulk - Fonctionnalité en développement');
+        }
+
+        function editContent(id) {
+            const content = contentManager.content.get(id);
+            if (content) {
+                document.getElementById('codeEditor').innerText = content.content;
+                window.currentEditingId = id;
+            }
+        }
+
+        function deleteContent(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce contenu?')) {
+                contentManager.content.delete(id);
+                contentManager.saveContent();
+                location.reload();
+            }
+        }
+
+        function saveContent() {
+            const editor = document.getElementById('codeEditor');
+            const content = editor.innerText;
+            
+            if (window.currentEditingId) {
+                const item = contentManager.content.get(window.currentEditingId);
+                if (item) {
+                    item.content = content;
+                    item.modified = new Date().toISOString();
+                    contentManager.saveContent();
+                }
+            }
+        }
+
+        function previewContent() {
+            const content = document.getElementById('codeEditor').innerText;
+            const previewWindow = window.open('', '_blank', 'width=800,height=600');
+            previewWindow.document.write(content);
+        }
+
+        function formatCode() {
+            const editor = document.getElementById('codeEditor');
+            // Simple HTML formatting
+            let content = editor.innerText;
+            content = content.replace(/></g, '>\n<');
+            editor.innerText = content;
+        }
+
+        function changeLanguage(language) {
+            // Change syntax highlighting based on language
+            console.log('Language changed to:', language);
+        }
+
+        // File upload handling
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            for (let file of files) {
+                console.log('Uploading:', file.name);
+                // Simulate upload
+                contentManager.showNotification(`Fichier uploadé: ${file.name}`, 'success');
+            }
+        });
+    </script>
+</body>
+</html>
