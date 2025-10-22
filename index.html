@@ -22,7 +22,7 @@
       justify-content: center;
       min-height: 100vh;
       text-align: center;
-      overflow: hidden;
+      overflow-x: hidden;
       backdrop-filter: blur(5px);
     }
     .intro {
@@ -33,20 +33,20 @@
       to { opacity: 1; }
     }
     h1 {
-      font-size: 3.5rem;
+      font-size: clamp(2rem, 5vw, 3.5rem);
       margin-bottom: 0.5rem;
       color: #00fff7;
       text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
     }
     .subtitle {
       color: #aaa;
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
       margin-bottom: 2rem;
     }
-    .language-select, .id-input {
+    .language-select, .id-input, .staff-login {
       margin: 1rem 0;
     }
-    select, input[type="text"] {
+    select, input[type="text"], input[type="password"] {
       padding: 0.7rem 1.2rem;
       border-radius: 12px;
       border: none;
@@ -55,9 +55,13 @@
       font-size: 1rem;
       outline: none;
       box-shadow: 0 0 10px rgba(0,255,247,0.4);
+      transition: all 0.3s ease;
     }
-    .enter-button {
-      margin-top: 2rem;
+    select:focus, input:focus {
+      box-shadow: 0 0 15px rgba(0,255,247,0.8);
+    }
+    .enter-button, .staff-button {
+      margin-top: 1rem;
       padding: 1rem 2.5rem;
       background: linear-gradient(135deg, #111, #222);
       border: 2px solid #00fff7;
@@ -68,15 +72,15 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    .enter-button:hover {
+    .enter-button:hover, .staff-button:hover {
       background: #00fff7;
       color: #111;
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(0,255,247,0.5);
     }
     .profile-img {
-      width: 130px;
-      height: 130px;
+      width: clamp(80px, 20vw, 130px);
+      height: clamp(80px, 20vw, 130px);
       border-radius: 50%;
       border: 4px solid #00fff7;
       object-fit: cover;
@@ -105,16 +109,53 @@
       color: #f0f0f0;
       font-weight: bold;
     }
-    .admin-panel {
+    .admin-panel, .staff-panel {
       display: none;
       margin-top: 2rem;
-      padding: 1rem;
-      background: rgba(0, 0, 0, 0.6);
+      padding: 1.5rem;
+      background: rgba(0, 0, 0, 0.8);
       border: 1px solid #00fff7;
-      border-radius: 10px;
+      border-radius: 15px;
+      max-width: 90%;
+      width: 400px;
     }
-    .admin-panel input, .admin-panel button {
+    .admin-panel h3, .staff-panel h3 {
+      color: #00fff7;
+      margin-top: 0;
+    }
+    .admin-panel input, .admin-panel button, .staff-panel input, .staff-panel button {
       margin: 0.5rem;
+    }
+    .staff-panel {
+      border-color: #ff6b35;
+      background: rgba(255, 107, 53, 0.1);
+    }
+    .staff-panel h3 {
+      color: #ff6b35;
+    }
+    .staff-panel input {
+      border-color: #ff6b35;
+      color: #ff6b35;
+    }
+    .error-message {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .loading {
+      display: none;
+      color: #00fff7;
+      margin-top: 1rem;
+    }
+    .loading::after {
+      content: '';
+      animation: dots 1.5s infinite;
+    }
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
     }
     footer {
       position: absolute;
@@ -125,16 +166,43 @@
     audio {
       display: none;
     }
+    .stats-panel {
+      display: none;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #00fff7;
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #00fff7;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      .admin-panel, .staff-panel {
+        width: 95%;
+      }
+    }
   </style>
 </head>
 <body>
   <audio autoplay loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/10/19/audio_d6852e1404.mp3?filename=deep-space-ambient-113845.mp3" type="audio/mpeg">
   </audio>
+  
+  <div class="stats-panel" id="statsPanel">
+    <div>Visiteurs: <span id="visitorCount">0</span></div>
+    <div>Staff connecté: <span id="staffCount">0</span></div>
+    <div>Uptime: <span id="uptime">0h 0m</span></div>
+  </div>
+
   <div class="intro">
-    <img src="morgan.jpg" alt="Photo de Morgan" class="profile-img">
+    <img src="morgan.jpg" alt="Photo de Morgan" class="profile-img" onerror="this.src='https://via.placeholder.com/130x130/00fff7/000000?text=M'">
     <h1>🌌 Bienvenue dans mon univers</h1>
-    <div class="subtitle">Portail d’accès — Big M 모건</div>
+    <div class="subtitle">Portail d'accès — Big M 모건</div>
 
     <div class="language-select">
       <label for="lang">🌍 Choisis ta langue :</label><br>
@@ -146,11 +214,21 @@
 
     <div class="id-input">
       <label for="userId">🧬 Entre ton identifiant personnalisé :</label><br>
-      <input type="text" id="userId" placeholder="Ex: morgan001">
+      <input type="text" id="userId" placeholder="Ex: morgan001" maxlength="20">
     </div>
 
     <button class="enter-button" onclick="enterSite()">✨ Entrer</button>
     <button class="qr-code-btn" onclick="generateQR()">📲 Obtenir un QR Code personnalisé</button>
+    
+    <button class="qr-code-btn" onclick="toggleStaffLogin()">🔐 Accès Personnel</button>
+    
+    <div class="staff-panel" id="staffPanel">
+      <h3>🔐 Connexion Personnel</h3>
+      <input type="password" id="staffCode" placeholder="Code d'accès" maxlength="20">
+      <button class="staff-button" onclick="staffLogin()">Se connecter</button>
+      <div class="error-message" id="staffError">Code incorrect</div>
+      <div class="loading" id="staffLoading">Connexion en cours</div>
+    </div>
   </div>
 
   <div class="admin-access" id="adminMessage" style="display:none">
@@ -161,13 +239,109 @@
     <h3>🎛 Panneau Admin</h3>
     <label><input type="checkbox" id="darkModeToggle"> Activer le mode ultra-sombre</label><br>
     <button onclick="addQuickLink()">➕ Ajouter un lien rapide</button>
+    <button onclick="viewLogs()">📊 Voir les logs</button>
+    <button onclick="clearCache()">🗑 Vider le cache</button>
+  </div>
+
+  <div class="admin-panel" id="staffDashboard" style="display:none; border-color: #ff6b35;">
+    <h3 style="color: #ff6b35;">👁 Panneau de Surveillance</h3>
+    <button onclick="viewAllUsers()">👥 Voir tous les utilisateurs</button>
+    <button onclick="monitorActivity()">📈 Activité en temps réel</button>
+    <button onclick="manageContent()">📝 Gérer le contenu</button>
+    <button onclick="systemStatus()">⚡ Statut système</button>
   </div>
 
   <footer>
-    &copy; 2025 Big M — All rights reserved
+    &copy; 2025 Big M — All rights reserved | <span id="loadTime">Load: 0ms</span>
   </footer>
 
   <script>
+    // Performance monitoring
+    const startTime = performance.now();
+    
+    // Cache system
+    const cache = new Map();
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      updateLoadTime();
+      updateStats();
+      setInterval(updateStats, 30000); // Update every 30 seconds
+    });
+
+    function updateLoadTime() {
+      const loadTime = Math.round(performance.now() - startTime);
+      document.getElementById('loadTime').textContent = `Load: ${loadTime}ms`;
+    }
+
+    function updateStats() {
+      const visitors = parseInt(localStorage.getItem('visitorCount') || '0');
+      const staff = parseInt(localStorage.getItem('staffCount') || '0');
+      const startDate = new Date(localStorage.getItem('siteStartDate') || new Date());
+      const uptime = new Date() - startDate;
+      
+      document.getElementById('visitorCount').textContent = visitors;
+      document.getElementById('staffCount').textContent = staff;
+      document.getElementById('uptime').textContent = formatUptime(uptime);
+    }
+
+    function formatUptime(ms) {
+      const hours = Math.floor(ms / (1000 * 60 * 60));
+      const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m`;
+    }
+
+    function toggleStaffLogin() {
+      const panel = document.getElementById('staffPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('staffCode').value = '';
+      document.getElementById('staffError').style.display = 'none';
+    }
+
+    function staffLogin() {
+      const code = document.getElementById('staffCode').value.trim();
+      const errorDiv = document.getElementById('staffError');
+      const loadingDiv = document.getElementById('staffLoading');
+      
+      if (!code) {
+        errorDiv.textContent = 'Veuillez entrer un code';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      loadingDiv.style.display = 'block';
+      errorDiv.style.display = 'none';
+
+      // Simulate secure check
+      setTimeout(() => {
+        loadingDiv.style.display = 'none';
+        
+        if (code === 'Morning_Starr') {
+          // Successful staff login
+          const staffCount = parseInt(localStorage.getItem('staffCount') || '0') + 1;
+          localStorage.setItem('staffCount', staffCount);
+          localStorage.setItem('staffSession', 'true');
+          localStorage.setItem('staffLoginTime', new Date().toISOString());
+          
+          document.getElementById('staffDashboard').style.display = 'block';
+          document.getElementById('staffPanel').style.display = 'none';
+          
+          // Add staff visual indicator
+          document.body.style.borderLeft = '5px solid #ff6b35';
+          
+          alert('✅ Accès personnel accordé - Mode surveillance activé');
+          updateStats();
+        } else {
+          errorDiv.textContent = 'Code incorrect - Tentative enregistrée';
+          errorDiv.style.display = 'block';
+          
+          // Log failed attempt
+          logSecurityEvent('Failed staff login attempt', { code: code, time: new Date().toISOString() });
+        }
+      }, 1500);
+    }
+
     function enterSite() {
       const lang = document.getElementById('lang').value;
       const userId = document.getElementById('userId').value.trim();
@@ -177,35 +351,124 @@
         return;
       }
 
+      // Update visitor count
+      const visitorCount = parseInt(localStorage.getItem('visitorCount') || '0') + 1;
+      localStorage.setItem('visitorCount', visitorCount);
       localStorage.setItem('lang', lang);
       localStorage.setItem('userId', userId);
 
-      const secretParam = btoa(`${userId}-bigmorgan`);
+      const secretParam = btoa(`${userId}-bigmorgan-${Date.now()}`);
       const isAdmin = userId.toLowerCase().includes("root") || userId === 'iam24morgan';
+      const isStaff = localStorage.getItem('staffSession') === 'true';
 
       if (isAdmin) {
         document.getElementById('adminMessage').style.display = 'block';
         document.getElementById('adminPanel').style.display = 'block';
       }
 
+      // Log user activity
+      logSecurityEvent('User login', { userId, lang, isAdmin, isStaff });
+
       setTimeout(() => {
-        window.location.href = `home.html?lang=${lang}&auth=${secretParam}${isAdmin ? '&admin=true' : ''}`;
-      }, 2000);
+        window.location.href = `home.html?lang=${lang}&auth=${secretParam}${isAdmin ? '&admin=true' : ''}${isStaff ? '&staff=true' : ''}`;
+      }, 1000);
     }
 
     function generateQR() {
       const userId = document.getElementById('userId').value.trim();
       if (!userId) {
-        alert("🔐 Tu dois d’abord entrer un identifiant.");
+        alert("🔐 Tu dois d'abord entrer un identifiant.");
         return;
       }
-      const secretParam = btoa(`${userId}-bigmorgan`);
+      const secretParam = btoa(`${userId}-bigmorgan-${Date.now()}`);
       const url = `${window.location.origin}/home.html?auth=${secretParam}`;
-      window.open(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=200x200`, '_blank');
+      
+      // Cache QR generation
+      const cacheKey = `qr-${userId}`;
+      if (cache.has(cacheKey) && Date.now() - cache.get(cacheKey).timestamp < CACHE_DURATION) {
+        window.open(cache.get(cacheKey).url, '_blank');
+        return;
+      }
+      
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=300x300`;
+      cache.set(cacheKey, { url: qrUrl, timestamp: Date.now() });
+      window.open(qrUrl, '_blank');
     }
 
     function addQuickLink() {
-      alert("🚧 Fonctionnalité d’ajout de lien rapide bientôt disponible.");
+      const link = prompt('Entrez l\'URL du lien rapide:');
+      const name = prompt('Entrez le nom du lien:');
+      if (link && name) {
+        let quickLinks = JSON.parse(localStorage.getItem('quickLinks') || '[]');
+        quickLinks.push({ name, link, date: new Date().toISOString() });
+        localStorage.setItem('quickLinks', JSON.stringify(quickLinks));
+        alert(`✅ Lien rapide "${name}" ajouté`);
+      }
+    }
+
+    function viewLogs() {
+      const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+      const recentLogs = logs.slice(-10).reverse();
+      let logText = '📊 Logs de sécurité (10 derniers):\n\n';
+      recentLogs.forEach(log => {
+        logText += `${new Date(log.timestamp).toLocaleString()} - ${log.event}\n`;
+      });
+      alert(logText);
+    }
+
+    function clearCache() {
+      cache.clear();
+      localStorage.removeItem('quickLinks');
+      alert('🗑 Cache vidé');
+    }
+
+    function viewAllUsers() {
+      alert('🚧 Fonctionnalité en développement - Vue des utilisateurs');
+    }
+
+    function monitorActivity() {
+      alert('📈 Surveillance active - Activité en temps réel');
+      // Implement real-time monitoring
+    }
+
+    function manageContent() {
+      alert('📝 Gestion du contenu - Accès au système de gestion');
+    }
+
+    function systemStatus() {
+      const memory = navigator.deviceMemory || 'Inconnu';
+      const cores = navigator.hardwareConcurrency || 'Inconnu';
+      const status = `⚡ Statut système:\n\nMémoire: ${memory}GB\nCœurs CPU: ${cores}\nTemps de chargement: ${Math.round(performance.now() - startTime)}ms\nCache: ${cache.size} entrées`;
+      alert(status);
+    }
+
+    function logSecurityEvent(event, data) {
+      const logs = JSON.parse(localStorage.getItem('securityLogs') || '[]');
+      logs.push({
+        event,
+        data,
+        timestamp: new Date().toISOString()
+      });
+      // Keep only last 100 logs
+      if (logs.length > 100) {
+        logs.splice(0, logs.length - 100);
+      }
+      localStorage.setItem('securityLogs', JSON.stringify(logs));
+    }
+
+    // Error handling
+    window.addEventListener('error', function(e) {
+      logSecurityEvent('JavaScript Error', {
+        message: e.message,
+        filename: e.filename,
+        lineno: e.lineno,
+        colno: e.colno
+      });
+    });
+
+    // Initialize site start date
+    if (!localStorage.getItem('siteStartDate')) {
+      localStorage.setItem('siteStartDate', new Date().toISOString());
     }
   </script>
 </body>
